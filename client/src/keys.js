@@ -1,3 +1,3 @@
-const googleApiKey = 'AIzaSyDgI0zbebFa8jKVyK_bBDBN9W0llM7FVZE';
+const googleApiKey = 'AIzaSyDbhpZ2qbibE6SEaMtHGIHRBBnHATuNT2c';
 
 export default googleApiKey;

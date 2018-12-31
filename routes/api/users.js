@@ -85,17 +85,12 @@ router.post('/login', (req, res) => {
         const payload = { id: user.id }; // Create JWT Payload
 
         // Sign Token
-        jwt.sign(
-          payload,
-          keys.secretOrKey,
-          { expiresIn: 21600 /* 6 hours */ },
-          (err, token) => {
-            res.json({
-              success: true,
-              token: 'Bearer ' + token
-            });
-          }
-        );
+        jwt.sign(payload, keys.secretOrKey, (err, token) => {
+          res.json({
+            success: true,
+            token: 'Bearer ' + token
+          });
+        });
       } else {
         errors.password = 'Password incorrect';
         return res.status(400).json(errors);

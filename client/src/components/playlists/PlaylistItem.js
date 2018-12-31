@@ -17,7 +17,7 @@ class PlaylistItem extends Component {
     return (
       <div className="card card-body mb-3">
         <h1>
-          {title}
+          {title}{' '}
           <i
             onClick={() =>
               this.setState({
