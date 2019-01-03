@@ -32,7 +32,7 @@ class AddToPlaylist extends Component {
       content = (
         <div className="dropdown">
           <button
-            className="btn btn-block btn-md btn-outline-danger dropdown-toggle"
+            className="btn btn-block btn-md btn-outline-info dropdown-toggle"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
@@ -51,6 +51,15 @@ class AddToPlaylist extends Component {
                 {playlist.title}
               </button>
             ))}
+            <Link to="/playlists/create" style={{ textDecoration: 'none' }}>
+              <button className="dropdown-item text-info">
+                Create new playlist
+                <i
+                  className="fas fa-plus text-info"
+                  style={{ float: 'right', color: 'red', marginLeft: '3px' }}
+                />
+              </button>
+            </Link>
           </div>
         </div>
       );
