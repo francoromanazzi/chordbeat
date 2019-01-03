@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getPlaylists } from '../../actions/playlistsActions';
-import isEmpty from '../../validation/is-empty';
 import Spinner from '../common/Spinner';
 import PlaylistItem from './PlaylistItem';
 
@@ -21,7 +20,7 @@ class Playlists extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (!isEmpty(newProps.playlists.playlists) && !newProps.playlists.loading) {
+    if (newProps.playlists.playlists) {
       this.setState({
         playlists: newProps.playlists.playlists,
         loading: newProps.playlists.loading
@@ -49,7 +48,7 @@ class Playlists extends Component {
           <h1 className="text-center">Error loading playlists</h1>
         </div>
       );
-    } else if (isEmpty(playlists) || loading) {
+    } else if (loading) {
       playlistsContent = <Spinner />;
     } else {
       playlistsContent = (
