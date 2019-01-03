@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { getPlaylists } from '../../actions/playlistsActions';
 import isEmpty from '../../validation/is-empty';
 import Spinner from '../common/Spinner';
@@ -27,6 +28,12 @@ class Playlists extends Component {
       });
     }
 
+    if (newProps.playlists.loading) {
+      this.setState({
+        loading: newProps.playlists.loading
+      });
+    }
+
     if (newProps.errors) {
       this.setState({ error: newProps.errors.error });
     }
@@ -38,9 +45,8 @@ class Playlists extends Component {
 
     if (error) {
       playlistsContent = (
-        <div class="container">
-          <h1 className="text-center">Tab not found</h1>
-          <h3 className="text-center">Please, modify your search</h3>
+        <div className="container">
+          <h1 className="text-center">Error loading playlists</h1>
         </div>
       );
     } else if (isEmpty(playlists) || loading) {
@@ -50,6 +56,11 @@ class Playlists extends Component {
         <React.Fragment>
           <h3 className="display-3 text-center">My Playlists</h3>
           <hr className="mb-4" />
+          <Link to="/playlists/create" style={{ textDecoration: 'none' }}>
+            <button className="btn btn-outline-info btn-block btn-lg mb-3">
+              Create new playlist
+            </button>
+          </Link>
           {playlists.map(playlist => (
             <PlaylistItem key={playlist._id} playlist={playlist} />
           ))}

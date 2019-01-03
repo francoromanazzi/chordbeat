@@ -18,7 +18,7 @@ router.post('/', (req, res) => {
     {
       query: search,
       page: 1,
-      type: ['Chords']
+      type: ['Chords', 'Tab']
     },
     (err, tabs) => {
       if (err) {
@@ -30,7 +30,8 @@ router.post('/', (req, res) => {
         // Get URL for the best rated tab
         const bestTab = tabs.reduce((tab1, tab2) =>
           tab1.rating > tab2.rating ||
-          (tab1.numberRates > tab2.numberRates * 1.5 && tab1.rating >= 4)
+          (tab1.numberRates > tab2.numberRates * 1.5 && tab1.rating >= 4.2) ||
+          (tab1.type === 'Chords' && tab2.type === 'Tab')
             ? tab1
             : tab2
         );

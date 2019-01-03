@@ -4,6 +4,7 @@ import { searchSong } from '../../actions/songActions';
 import Spinner from '../common/Spinner';
 import YouTubePlayer from 'youtube-player';
 import isEmpty from '../../validation/is-empty';
+import AddToPlaylist from './AddToPlaylist';
 
 class Song extends Component {
   constructor() {
@@ -38,10 +39,6 @@ class Song extends Component {
     }
   }
 
-  onClickAddToPlaylist = e => {
-    e.preventDefault();
-  };
-
   render() {
     const { song, loading, error } = this.state;
     let songContent;
@@ -63,39 +60,61 @@ class Song extends Component {
 
       const tabRaw = song.tab.content.text;
 
-      // Split tab in two columns
-      let linesAmount = (tabRaw.match(/\n/g) || []).length;
+      if (song.tab.type === 'Chords') {
+        // Split tab in two columns
+        let linesAmount = (tabRaw.match(/\n/g) || []).length;
 
-      let col1 = tabRaw
-        .split('\n')
-        .slice(0, linesAmount / 2 + 1)
-        .join('\n');
-      let col2 = tabRaw
-        .split('\n')
-        .slice(-linesAmount / 2 - (linesAmount % 2 !== 0 ? 1 : 0)) // One more line if odd
-        .join('\n');
+        let col1 = tabRaw
+          .split('\n')
+          .slice(0, linesAmount / 2 + 1)
+          .join('\n');
+        let col2 = tabRaw
+          .split('\n')
+          .slice(-linesAmount / 2 - (linesAmount % 2 !== 0 ? 1 : 0)) // One more line if odd
+          .join('\n');
 
-      // If the last line in col1 is chords, add its corresponding lyrics below from col2
-      /*
+        // If the last line in col1 is chords, add its corresponding lyrics below from col2
+        /*
       if (col1.slice(-col1.lastIndexOf('\n')).includes('[ch]')) {
         // Remove first line from col2
         const removedLine = '\n' + col2.slice(0, col2.indexOf('\n'));
         col1 += removedLine;
       }*/
 
-      const col1NoChTag = col1.replace(/\[ch\]/g, '').replace(/\[\/ch\]/g, '');
-      const col2NoChTag = col2.replace(/\[ch\]/g, '').replace(/\[\/ch\]/g, '');
+        const col1NoChTag = col1
+          .replace(/\[ch\]/g, '')
+          .replace(/\[\/ch\]/g, '');
+        const col2NoChTag = col2
+          .replace(/\[ch\]/g, '')
+          .replace(/\[\/ch\]/g, '');
 
-      songContent = (
-        <div className="row">
-          <div className="col-lg-6" style={{ whiteSpace: 'pre-wrap' }}>
-            {col1NoChTag}
+        songContent = (
+          <div
+            className="row"
+            style={{ whiteSpace: 'pre-wrap', fontFamily: 'Roboto Mono' }}
+          >
+            <div className="col-lg-6" style={{ whiteSpace: 'pre-wrap' }}>
+              {col1NoChTag}
+            </div>
+            <div className="col-lg-6" style={{ whiteSpace: 'pre-wrap' }}>
+              {col2NoChTag}
+            </div>
           </div>
-          <div className="col-lg-6" style={{ whiteSpace: 'pre-wrap' }}>
-            {col2NoChTag}
+        );
+      } else {
+        // song.tab.type === 'Tab' => no column splitting and font is 'Roboto Mono' to match UG's tab
+        const tabNoChTag = tabRaw
+          .replace(/\[ch\]/g, '')
+          .replace(/\[\/ch\]/g, '');
+        songContent = (
+          <div
+            className="container"
+            style={{ whiteSpace: 'pre-wrap', fontFamily: 'Roboto Mono' }}
+          >
+            {tabNoChTag}
           </div>
-        </div>
-      );
+        );
+      }
     }
 
     return (
@@ -111,16 +130,7 @@ class Song extends Component {
             )}
           </div>
           <div id="right-side" className="col-md-3">
-            {!isEmpty(this.state.song) && (
-              <React.Fragment>
-                <button
-                  onClick={this.onClickAddToPlaylist}
-                  className="btn btn-block btn-md btn-outline-danger"
-                >
-                  Add to playlist
-                </button>
-              </React.Fragment>
-            )}
+            {!isEmpty(this.state.song) && <AddToPlaylist />}
           </div>
         </div>
 

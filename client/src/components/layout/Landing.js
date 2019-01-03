@@ -47,6 +47,7 @@ class Landing extends Component {
                   />
                   <input
                     type="submit"
+                    value="Search"
                     className="btn btn-info btn-block mt-4"
                   />
                 </form>

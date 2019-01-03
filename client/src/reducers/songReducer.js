@@ -1,5 +1,3 @@
-import isEmpty from '../validation/is-empty';
-
 import { SONG_LOADING, GET_SONG, CLEAR_SONG } from '../actions/types';
 
 const initialState = {

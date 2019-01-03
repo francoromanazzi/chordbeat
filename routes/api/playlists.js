@@ -122,6 +122,72 @@ router.delete(
   }
 );
 
+// @route   DELETE api/playlists/:playlistID/songs
+// @desc    Delete all songs from a playlist
+// @access  Private
+router.delete(
+  '/:playlistID/songs',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Playlist.findById(req.params.playlistID)
+      .then(playlist => {
+        // Check playlist owner
+        if (playlist.user.toString() !== req.user.id) {
+          return res
+            .status(401)
+            .json({ notauthorized: 'This playlist is not yours' });
+        }
+
+        // Delete songs
+        playlist.songs = [];
+
+        // Save
+        playlist.save().then(playlist => res.json({ playlist }));
+      })
+      .catch(err =>
+        res.status(404).json({ playlistnotfound: 'No playlist found' })
+      );
+  }
+);
+
+// @route   PUT api/playlists/:playlistID
+// @desc    Edit playlist title and/or description
+// @access  Private
+router.put(
+  '/:playlistID',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validatePlaylistInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+
+    Playlist.findById(req.params.playlistID)
+      .then(playlist => {
+        // Check playlist owner
+        if (playlist.user.toString() !== req.user.id) {
+          return res
+            .status(401)
+            .json({ notauthorized: 'This playlist is not yours' });
+        }
+
+        const { title, description } = req.body;
+
+        // Edit
+        playlist.title = title;
+        playlist.description = description;
+
+        // Save
+        playlist.save().then(playlist => res.json(playlist));
+      })
+      .catch(err =>
+        res.status(404).json({ playlistnotfound: 'No playlist found' })
+      );
+  }
+);
+
 // @route   POST api/playlists/:playlistID
 // @desc    Add song to playlist
 // @access  Private
@@ -129,16 +195,14 @@ router.post(
   '/:playlistID',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateSongInput(req.body);
+    const { errors, isValid } = validateSongInput(req.body.newSong);
 
     // Check Validation
     if (!isValid) {
       return res.status(400).json(errors);
     }
 
-    const { title, artist, yt, tab } = req.body;
-
-    const newSong = { title, artist, yt, tab };
+    const { newSong } = req.body;
 
     Playlist.findById(req.params.playlistID)
       .then(playlist => {

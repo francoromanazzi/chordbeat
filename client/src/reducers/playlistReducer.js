@@ -1,5 +1,6 @@
 import {
   PLAYLIST_LOADING,
+  PLAYLISTS_LOADING,
   GET_PLAYLISTS,
   GET_PLAYLIST,
   ADD_PLAYLIST,
@@ -20,6 +21,11 @@ export default function(state = initialState, action) {
         ...state,
         loading: true
       };
+    case PLAYLISTS_LOADING:
+      return {
+        ...state,
+        loading: true
+      };
     case GET_PLAYLISTS:
       return {
         ...state,
@@ -35,7 +41,7 @@ export default function(state = initialState, action) {
     case ADD_PLAYLIST:
       return {
         ...state,
-        playlists: [action.payload, ...state.playlists]
+        playlists: [...state.playlists, action.payload]
       };
     case DELETE_PLAYLIST:
       return {
@@ -47,8 +53,7 @@ export default function(state = initialState, action) {
     case CLEAR_CURRENT_PLAYLISTS:
       return {
         ...state,
-        playlist: {},
-        playlists: {}
+        playlists: []
       };
     default:
       return state;

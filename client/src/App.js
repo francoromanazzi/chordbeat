@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from './utils/set-auth-token';
-import { setCurrentUser, logoutUser } from './actions/authActions';
-import { clearCurrentPlaylists } from './actions/playlistsActions';
+import { setCurrentUser } from './actions/authActions';
 import { Provider } from 'react-redux';
 import store from './store';
 
@@ -16,6 +15,8 @@ import Login from './components/auth/Login';
 import NotFound from './components/not-found/NotFound';
 import Song from './components/song/Song';
 import Playlists from './components/playlists/Playlists';
+import CreatePlaylist from './components/playlists/CreatePlaylist/CreatePlaylist';
+import EditPlaylist from './components/playlists/EditPlaylist/EditPlaylist';
 
 import './App.css';
 
@@ -34,11 +35,10 @@ if (localStorage.jwtToken) {
   if (decoded.exp < currentTime) {
     // Logout user
     store.dispatch(logoutUser());
-    // Clear current Profile
-    store.dispatch(clearCurrentPlaylists());
+    // Clear current Playlists
+    //store.dispatch(clearCurrentPlaylists());
     // Redirect to login
     window.location.href = '/login';
-    
   }
   */
 }
@@ -57,6 +57,16 @@ class App extends Component {
               <Route exact path="/not-found" component={NotFound} />
               <Switch>
                 <PrivateRoute exact path="/playlists" component={Playlists} />
+                <PrivateRoute
+                  exact
+                  path="/playlists/create"
+                  component={CreatePlaylist}
+                />
+                <PrivateRoute
+                  exact
+                  path="/playlists/edit/:playlistID"
+                  component={EditPlaylist}
+                />
               </Switch>
             </div>
             <Route exact path="/song/:search" component={Song} />

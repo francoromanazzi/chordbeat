@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { deletePlaylist } from '../../actions/playlistsActions';
 import SongItem from './SongItem';
 
 class PlaylistItem extends Component {
@@ -7,7 +10,7 @@ class PlaylistItem extends Component {
   };
 
   onDeleteClick = id => {
-    //this.props.deleteSong(id);
+    this.props.deletePlaylist(id);
   };
 
   render() {
@@ -32,6 +35,17 @@ class PlaylistItem extends Component {
             style={{ cursor: 'pointer', float: 'right', color: 'red' }}
             onClick={this.onDeleteClick.bind(this, _id)}
           />
+          <Link to={`playlists/edit/${_id}`}>
+            <i
+              className="fas fa-pencil-alt"
+              style={{
+                cursor: 'pointer',
+                float: 'right',
+                color: 'black',
+                marginRight: '1rem'
+              }}
+            />
+          </Link>
           {description && <p className="lead">{description}</p>}
         </h1>
         {showPlaylisttInfo ? (
@@ -46,4 +60,7 @@ class PlaylistItem extends Component {
   }
 }
 
-export default PlaylistItem;
+export default connect(
+  null,
+  { deletePlaylist }
+)(PlaylistItem);

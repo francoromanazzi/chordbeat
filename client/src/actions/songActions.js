@@ -14,6 +14,13 @@ export const searchSong = search => dispatch => {
   dispatch(clearErrors());
   dispatch(setSongLoading());
 
+  // Temporarily remove default header auth from axios request if it exists (youtube rejects it)
+  let authHeaderBackup = null;
+  if (axios.defaults.headers.common['Authorization']) {
+    authHeaderBackup = axios.defaults.headers.common['Authorization'];
+    delete axios.defaults.headers.common['Authorization'];
+  }
+
   const youtubeRes = ytSearch(search, {
     key: googleApiKey,
     maxResults: 1,
@@ -24,6 +31,10 @@ export const searchSong = search => dispatch => {
 
   Promise.all([youtubeRes, ugRes])
     .then(res => {
+      // Put back the default auth header if it was removed before
+      if (authHeaderBackup !== null)
+        axios.defaults.headers.common['Authorization'] = authHeaderBackup;
+
       dispatch({
         type: GET_SONG,
         payload: {
@@ -32,12 +43,16 @@ export const searchSong = search => dispatch => {
         }
       });
     })
-    .catch(err =>
+    .catch(err => {
+      // Put back the default auth header if it was removed before
+      if (authHeaderBackup !== null)
+        axios.defaults.headers.common['Authorization'] = authHeaderBackup;
+
       dispatch({
         type: GET_ERRORS,
         payload: { error: err.response.data }
-      })
-    );
+      });
+    });
 };
 
 // Set loading state

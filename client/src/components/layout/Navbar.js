@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { logoutUser } from '../../actions/authActions';
 import { clearSong } from '../../actions/songActions';
-import TextFieldGroupSmall from '../common/TextFieldGroupSmall';
+//import TextFieldGroupSmall from '../common/TextFieldGroupSmall';
 
 class Navbar extends Component {
   constructor() {

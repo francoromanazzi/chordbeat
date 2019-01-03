@@ -24,14 +24,6 @@ const PlaylistSchema = new Schema({
       artist: {
         type: String,
         required: true
-      },
-      yt: {
-        type: String,
-        required: true
-      },
-      tab: {
-        type: String,
-        required: true
       }
     }
   ]

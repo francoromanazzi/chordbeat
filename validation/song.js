@@ -6,8 +6,6 @@ module.exports = function validateSongInput(data) {
 
   data.title = !isEmpty(data.title) ? data.title : '';
   data.artist = !isEmpty(data.artist) ? data.artist : '';
-  data.yt = !isEmpty(data.yt) ? data.yt : '';
-  data.tab = !isEmpty(data.tab) ? data.tab : '';
 
   // Title validation
   if (Validator.isEmpty(data.title)) {
@@ -23,15 +21,6 @@ module.exports = function validateSongInput(data) {
     errors.artist = 'Artist must be less than 40 characters';
   }
 
-  // YT validation
-  if (Validator.isEmpty(data.yt)) {
-    errors.yt = 'YT field is required';
-  }
-
-  // Tab validation
-  if (Validator.isEmpty(data.tab)) {
-    errors.tab = 'Tab field is required';
-  }
   return {
     errors,
     isValid: isEmpty(errors)
