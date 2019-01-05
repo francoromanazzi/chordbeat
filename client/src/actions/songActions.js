@@ -5,7 +5,9 @@ import {
   GET_SONG,
   SONG_LOADING,
   CLEAR_ERRORS,
-  CLEAR_SONG
+  CLEAR_SONG,
+  REMOVE_HEADER_TOKEN,
+  PUT_HEADER_TOKEN
 } from '../actions/types';
 var ytSearch = require('youtube-search');
 
@@ -17,6 +19,7 @@ export const searchSong = search => dispatch => {
   // Temporarily remove default header auth from axios request if it exists (youtube rejects it)
   let authHeaderBackup = null;
   if (axios.defaults.headers.common['Authorization']) {
+    dispatch({ type: REMOVE_HEADER_TOKEN });
     authHeaderBackup = axios.defaults.headers.common['Authorization'];
     delete axios.defaults.headers.common['Authorization'];
   }
@@ -32,8 +35,10 @@ export const searchSong = search => dispatch => {
   Promise.all([youtubeRes, ugRes])
     .then(res => {
       // Put back the default auth header if it was removed before
-      if (authHeaderBackup !== null)
+      if (authHeaderBackup !== null) {
         axios.defaults.headers.common['Authorization'] = authHeaderBackup;
+        dispatch({ type: PUT_HEADER_TOKEN });
+      }
 
       dispatch({
         type: GET_SONG,
@@ -45,8 +50,10 @@ export const searchSong = search => dispatch => {
     })
     .catch(err => {
       // Put back the default auth header if it was removed before
-      if (authHeaderBackup !== null)
+      if (authHeaderBackup !== null) {
         axios.defaults.headers.common['Authorization'] = authHeaderBackup;
+        dispatch({ type: PUT_HEADER_TOKEN });
+      }
 
       dispatch({
         type: GET_ERRORS,

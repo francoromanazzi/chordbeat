@@ -14,7 +14,10 @@ class Landing extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    if (this.state.search.trim() === '') return;
+    if (this.state.search.trim() === '') {
+      this.setState({ search: '' });
+      return;
+    }
 
     this.props.clearSong();
 

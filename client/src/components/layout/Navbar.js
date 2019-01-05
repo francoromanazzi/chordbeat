@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { logoutUser } from '../../actions/authActions';
 import { clearSong } from '../../actions/songActions';
-//import TextFieldGroupSmall from '../common/TextFieldGroupSmall';
+import TextFieldGroupSmall from '../common/TextFieldGroupSmall';
 
 class Navbar extends Component {
   constructor() {
@@ -16,7 +16,10 @@ class Navbar extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    if (this.state.search.trim() === '') return;
+    if (this.state.search.trim() === '') {
+      this.setState({ search: '' });
+      return;
+    }
 
     this.props.clearSong();
 
@@ -36,13 +39,7 @@ class Navbar extends Component {
     this.props.history.push('/');
   };
 
-  /*
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.auth.isAuthenticated) {
-      this.props.history.push('/');
-    }
-  }
-  */
+  componentWillReceiveProps(nextProps) {}
 
   render() {
     const { isAuthenticated } = this.props.auth;
@@ -87,9 +84,8 @@ class Navbar extends Component {
           <Link className="navbar-brand mr-4" to="/">
             <b>Chordbeat</b>
           </Link>
-          {/* BROKEN, TODO: FIX
-          <div className="d-none d-sm-inline-block">
-            
+
+          <div className="d-none d-md-inline-block ml-4">
             <form onSubmit={this.onSubmit} className="form-inline">
               <TextFieldGroupSmall
                 name="search"
@@ -98,8 +94,8 @@ class Navbar extends Component {
                 onChange={this.onChange}
               />
               <input type="submit" className="btn btn-outline-info btn-sm" />
-            </form>         
-          </div> */}
+            </form>
+          </div>
           <button
             className="navbar-toggler"
             type="button"

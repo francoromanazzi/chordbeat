@@ -10,9 +10,10 @@ class Song extends Component {
   constructor() {
     super();
     this.state = {
-      song: null,
-      loading: null,
-      error: false
+      song: {},
+      loading: false,
+      error: false,
+      changingSong: false
     };
   }
 
@@ -21,14 +22,23 @@ class Song extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.song.song && !newProps.song.loading) {
+    if (newProps.song.song) {
       this.setState({
-        song: newProps.song.song,
-        loading: newProps.song.loading
+        song: newProps.song.song
       });
+
+      if (newProps.song.loading === false)
+        this.setState({ changingSong: false });
+
+      if (isEmpty(newProps.song.song) && !this.state.loading) {
+        this.setState({ changingSong: true });
+        this.props.searchSong(
+          this.props.match.params.search.replace(/\+/g, ' ')
+        );
+      }
     }
 
-    if (newProps.song.loading) {
+    if (!isEmpty(newProps.song.loading)) {
       this.setState({
         loading: newProps.song.loading
       });
@@ -39,20 +49,42 @@ class Song extends Component {
     }
   }
 
+  removeYTPlayerFromDOM = () => {
+    let ytPlayer = document.getElementById('yt-player');
+
+    if (!ytPlayer) return;
+
+    const ytPlayerParent = ytPlayer.parentNode;
+
+    const cleanYtPlayer = document.createElement('div');
+    cleanYtPlayer.setAttribute('id', 'yt-player');
+    cleanYtPlayer.classList.add('col-md-3');
+
+    ytPlayerParent.replaceChild(cleanYtPlayer, ytPlayer);
+  };
+
   render() {
-    const { song, loading, error } = this.state;
+    const { song, loading, error, changingSong } = this.state;
     let songContent;
 
     if (error) {
+      this.removeYTPlayerFromDOM();
       songContent = (
         <div className="container">
           <h1 className="text-center">Tab not found</h1>
           <h3 className="text-center">Please, modify your search</h3>
         </div>
       );
-    } else if (song === null || loading || Object.keys(song).length === 0) {
+    } else if (isEmpty(song) || loading || changingSong) {
+      this.removeYTPlayerFromDOM();
       songContent = <Spinner />;
     } else if (document.getElementById('yt-player')) {
+      // Remove previous video, if it exists
+
+      if (document.getElementById('yt-player').tagName === 'IFRAME') {
+        this.removeYTPlayerFromDOM();
+      }
+
       YouTubePlayer('yt-player', {
         videoId: song.ytID,
         height: 150
@@ -121,16 +153,23 @@ class Song extends Component {
       <div className="container-fluid">
         <div className="row mb-2">
           <div id="yt-player" className="col-md-3" />
+
           <div id="title-artist" className="col-md-6">
-            {!isEmpty(this.state.song) && (
-              <React.Fragment>
-                <h1 className="text-center">{this.state.song.tab.name}</h1>
-                <h3 className="text-center">{this.state.song.tab.artist}</h3>
-              </React.Fragment>
-            )}
+            {!isEmpty(this.state.song) &&
+              !this.state.loading &&
+              !this.state.error &&
+              !this.state.changingSong && (
+                <React.Fragment>
+                  <h1 className="text-center">{this.state.song.tab.name}</h1>
+                  <h3 className="text-center">{this.state.song.tab.artist}</h3>
+                </React.Fragment>
+              )}
           </div>
           <div id="right-side" className="col-md-3">
-            {!isEmpty(this.state.song) && <AddToPlaylist />}
+            {!isEmpty(this.state.song) &&
+              !this.state.loading &&
+              !this.state.error &&
+              !this.state.changingSong && <AddToPlaylist />}
           </div>
         </div>
 

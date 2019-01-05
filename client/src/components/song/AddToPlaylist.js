@@ -2,22 +2,35 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getPlaylists, addToPlaylist } from '../../actions/playlistsActions';
+import Spinner from '../common/Spinner';
 
 class AddToPlaylist extends Component {
   constructor() {
     super();
     this.state = {
-      playlists: []
+      playlists: [],
+      waitingForHeaderToken: false
     };
   }
 
   componentDidMount() {
-    if (this.props.auth.isAuthenticated) this.props.getPlaylists();
+    if (this.props.auth.isAuthenticated) {
+      if (this.props.auth.headerToken) this.props.getPlaylists();
+      else this.setState({ waitingForHeaderToken: true });
+    }
   }
 
   componentWillReceiveProps(newProps) {
     if (newProps.playlists.playlists) {
       this.setState({ playlists: newProps.playlists.playlists });
+    }
+
+    if (
+      newProps.auth.headerToken === true &&
+      this.state.waitingForHeaderToken
+    ) {
+      this.props.getPlaylists();
+      this.setState({ waitingForHeaderToken: false });
     }
   }
 
@@ -63,6 +76,8 @@ class AddToPlaylist extends Component {
           </div>
         </div>
       );
+    } else if (this.state.waitingForHeaderToken) {
+      content = <Spinner />;
     } else {
       content = (
         <Link
