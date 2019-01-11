@@ -2,7 +2,7 @@
 
 Chordbeat is a website to search for guitar chords for any song. It allows you to create and save playlists.
 
-Live demo: https://vast-refuge-47088.herokuapp.com/
+Live demo: https://chordbeat.herokuapp.com/
 
 ## Screenshots
 
